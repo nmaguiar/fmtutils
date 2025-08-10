@@ -40,15 +40,6 @@ jobs:
         platforms: linux/amd64
         tags: nmaguiar/fmtutils:build-x64
 
-    - uses: docker/build-push-action@v3
-      name: Build and push deb
-      with:
-        context: .
-        file: ./Dockerfile.deb
-        push: true
-        platforms: linux/amd64
-        tags: nmaguiar/fmtutils:build-deb-x64
-
   build-arm64:
 
     runs-on: ubuntu-24.04-arm
@@ -78,15 +69,6 @@ jobs:
         push: true
         tags: nmaguiar/fmtutils:build-arm64
 
-    - uses: docker/build-push-action@v3
-      name: Build and push deb
-      with:
-        context: .
-        file: ./Dockerfile.deb
-        platforms: linux/arm64
-        push: true
-        tags: nmaguiar/fmtutils:build-deb-arm64
-
   manifest:
 
     runs-on: ubuntu-latest
@@ -104,7 +86,3 @@ jobs:
     - name: Create and push multi-arch manifest
       run : |
         docker buildx imagetools create --tag nmaguiar/fmtutils:latest nmaguiar/fmtutils:build-x64 nmaguiar/fmtutils:build-arm64
-
-    - name: Create and push multi-arch manifest deb
-      run : |
-        docker buildx imagetools create --tag nmaguiar/fmtutils:deb nmaguiar/fmtutils:build-deb-x64 nmaguiar/fmtutils:build-deb-arm64
