@@ -1,0 +1,110 @@
+name: Docker Image CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  schedule:
+    - cron: '43 3 * * 6'
+
+jobs:
+
+  build-x64:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Login to DockerHub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - uses: docker/build-push-action@v3
+      name: Build and push
+      with:
+        context: .
+        file: ./Dockerfile
+        push: true
+        platforms: linux/amd64
+        tags: nmaguiar/fmtutils:build-x64
+
+    - uses: docker/build-push-action@v3
+      name: Build and push deb
+      with:
+        context: .
+        file: ./Dockerfile.deb
+        push: true
+        platforms: linux/amd64
+        tags: nmaguiar/fmtutils:build-deb-x64
+
+  build-arm64:
+
+    runs-on: ubuntu-24.04-arm
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Login to DockerHub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - uses: docker/build-push-action@v3
+      name: Build and push
+      with:
+        context: .
+        file: ./Dockerfile
+        platforms: linux/arm64
+        push: true
+        tags: nmaguiar/fmtutils:build-arm64
+
+    - uses: docker/build-push-action@v3
+      name: Build and push deb
+      with:
+        context: .
+        file: ./Dockerfile.deb
+        platforms: linux/arm64
+        push: true
+        tags: nmaguiar/fmtutils:build-deb-arm64
+
+  manifest:
+
+    runs-on: ubuntu-latest
+    needs  : [build-arm64, build-x64]
+    steps  :
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Login to DockerHub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Create and push multi-arch manifest
+      run : |
+        docker buildx imagetools create --tag nmaguiar/fmtutils:latest nmaguiar/fmtutils:build-x64 nmaguiar/fmtutils:build-arm64
+
+    - name: Create and push multi-arch manifest deb
+      run : |
+        docker buildx imagetools create --tag nmaguiar/fmtutils:deb nmaguiar/fmtutils:build-deb-x64 nmaguiar/fmtutils:build-deb-arm64
