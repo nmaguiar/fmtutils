@@ -9,7 +9,7 @@ RUN cd /openaf\
 USER root
 RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories \
  && apk update \
- && apk --no-cache add pandoc python3 py3-pip cairo pango gdk-pixbuf\
+ && apk --no-cache add fontconfig font-noto font-dejavu pandoc python3 py3-pip cairo pango gdk-pixbuf\
  && pip install --break-system-packages --no-cache-dir weasyprint\
  && rm -rf /var/cache/apk/* /tmp/* /var/tmp/*
 
@@ -32,6 +32,22 @@ RUN gzip /etc/fmtutils\
  && echo "export PATH=$PATH:/openaf:/openaf/ojobs" >> /etc/bash/start.sh\
  && cp /etc/bash/start.sh /etc/profile.d/start.sh
 
+# Setup usage and examples
+# ------------------------
+COPY USAGE.md /USAGE.md
+COPY EXAMPLES.md /EXAMPLES.md
+COPY entrypoint.sh /.entrypoint.sh
+RUN rm /USAGE.md.gz /EXAMPLES.md.gz\
+ && gzip /USAGE.md\
+ && gzip /EXAMPLES.md\
+ && echo "#!/bin/sh" > /usr/bin/usage-help\
+ && echo "zcat /USAGE.md.gz | oafp in=md mdtemplate=true | less -r" >> /usr/bin/usage-help\
+ && echo "#!/bin/sh" > /usr/bin/examples-help\
+ && echo "zcat /EXAMPLES.md.gz | oafp in=md mdtemplate=true | less -r" > /usr/bin/examples-help\
+ && chmod a+x /usr/bin/usage-help\
+ && chmod a+x /usr/bin/examples-help\
+ && chmod a+x /.entrypoint.sh
+
 USER openaf:root
 
 # -------------------
@@ -44,4 +60,4 @@ ENV PATH=$PATH:$OAF_HOME:$OAF_HOME/ojobs
 USER openaf
 WORKDIR /fmtutils
 
-CMD ["/usr/bin/usage-help"]
+ENTRYPOINT ["/.entrypoint.sh"]
