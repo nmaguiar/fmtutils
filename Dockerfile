@@ -5,8 +5,13 @@ RUN cd /openaf\
  && curl https://openaf.io/nightly/openaf.jar.repacked -o openaf.jar\
  && curl https://openaf.io/nightly/openaf.jar -o openaf.jar.orig\
  && /openaf/oaf --repack\
- && opack install asciidoc mermaid plugin-xls
+ && opack install asciidoc mermaid plugin-xls asciimo badgen mac qr
 
+# Install oJobs
+RUN curl -s https://ojob.io/formats/str2banner.yaml > /openaf/ojobs/str2banner.yaml\
+ && /openaf/oaf --sb /openaf/ojobs/str2banner.yaml
+
+# Install Alpine packages
 USER root
 RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories \
  && apk update \

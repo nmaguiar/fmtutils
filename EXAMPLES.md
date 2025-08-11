@@ -4,6 +4,7 @@ List of examples:
 
 | Category | Example title |
 |----------|---------------|
+| Banner  | Generate an ascii banner |
 | Convert | Convert MD into PDF |
 | Convert | Convert DOCx into MD |
 | Convert | Convert MD into DOCx |
@@ -81,3 +82,25 @@ pandoc my-original.md -t html5 -o my-output.html
 ```
 
 > This is useful when you need to copy to other tools that accept basic HTML as input
+
+---
+
+## Generate an ascii banner
+
+To convert a string to an ascii banner use the **str2banner.yaml**:
+
+```bash
+
+str2banner.yaml str=Utils font=thin
+str2banner.yaml str=Utils font=banner
+
+```
+
+To pick the font you like you can also output the string in all available fonts:
+
+```bash
+
+str2banner.yaml str=Utils list=true | less -R
+reset
+
+```
