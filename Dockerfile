@@ -4,13 +4,13 @@ FROM nmaguiar/baseutils as main
 RUN cd /openaf\
  && curl https://openaf.io/nightly/openaf.jar.repacked -o openaf.jar\
  && curl https://openaf.io/nightly/openaf.jar -o openaf.jar.orig\
- && /openaf/oaf --repack
+ && /openaf/oaf --repack\
+ && opack install asciidoc mermaid plugin-xls
 
 USER root
 RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories \
  && apk update \
- && apk --no-cache add fontconfig font-noto font-dejavu pandoc python3 py3-pip cairo pango gdk-pixbuf\
- && pip install --break-system-packages --no-cache-dir weasyprint\
+ && apk --no-cache add fontconfig ttf-dejavu chromium pandoc\
  && rm -rf /var/cache/apk/* /tmp/* /var/tmp/*
 
 # Setup fmtutils folder
@@ -47,6 +47,11 @@ RUN rm /USAGE.md.gz /EXAMPLES.md.gz\
  && chmod a+x /usr/bin/usage-help\
  && chmod a+x /usr/bin/examples-help\
  && chmod a+x /.entrypoint.sh
+
+# Copy scripts
+# ------------
+COPY scripts /usr/local/bin
+RUN chmod a+x /usr/local/bin/*.sh
 
 USER openaf:root
 

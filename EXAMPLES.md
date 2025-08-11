@@ -14,6 +14,11 @@ Execute:
 
 ```bash
 
-pandoc in.md -o out.pdf --pdf-engine=weasyprint
+oafp in.md out=html outfile=/fmtutils/out.html htmlopen=false
+scaleHTML.sh 0.75 /fmtutils/out.html
+chromium-browser --no-sandbox --headless --no-pdf-header-footer --print-to-pdf=out.pdf file:///fmtutils/out.html
+rm out.html
 
 ```
+
+> You can change the PDF per page scale of the original HTML using scaleHTML.sh that will try to inject a body zoom factor css rule
