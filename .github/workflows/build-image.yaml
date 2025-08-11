@@ -85,4 +85,4 @@ jobs:
 
     - name: Create and push multi-arch manifest
       run : |
-        docker buildx imagetools create --tag nmaguiar/fmtutils:latest nmaguiar/fmtutils:build-x64 nmaguiar/fmtutils:build-arm64
+        docker buildx imagetools create --tag nmaguiar/fmtutils:build nmaguiar/fmtutils:build-x64 nmaguiar/fmtutils:build-arm64
