@@ -41,16 +41,24 @@ RUN gzip /etc/fmtutils\
 # ------------------------
 COPY USAGE.md /USAGE.md
 COPY EXAMPLES.md /EXAMPLES.md
+COPY docs/PANDOC.md /PANDOC.md
 COPY entrypoint.sh /.entrypoint.sh
 RUN rm /USAGE.md.gz /EXAMPLES.md.gz\
  && gzip /USAGE.md\
  && gzip /EXAMPLES.md\
+ && gzip /PANDOC.md\
  && echo "#!/bin/sh" > /usr/bin/usage-help\
  && echo "zcat /USAGE.md.gz | oafp in=md mdtemplate=true | less -r" >> /usr/bin/usage-help\
  && echo "#!/bin/sh" > /usr/bin/examples-help\
- && echo "zcat /EXAMPLES.md.gz | oafp in=md mdtemplate=true | less -r" > /usr/bin/examples-help\
+ && echo "zcat /EXAMPLES.md.gz | oafp in=md mdtemplate=true | less -r" >> /usr/bin/examples-help\
+ && echo "#!/bin/sh" > /usr/bin/pandoc-help\
+ && echo "zcat /PANDOC.md.gz | oafp in=md mdtemplate=true | less -r" >> /usr/bin/pandoc-help\
+ && echo "#!/bin/sh" > /usr/bin/oafp-help\
+ && echo "oafp -h | less -r" >> /usr/bin/oafp-help\
  && chmod a+x /usr/bin/usage-help\
  && chmod a+x /usr/bin/examples-help\
+ && chmod a+x /usr/bin/pandoc-help\
+ && chmod a+x /usr/bin/oafp-help\
  && chmod a+x /.entrypoint.sh
 
 # Copy scripts
