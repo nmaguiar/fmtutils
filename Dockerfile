@@ -15,7 +15,7 @@ RUN curl -s https://ojob.io/formats/str2banner.yaml > /openaf/ojobs/str2banner.y
 USER root
 RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories \
  && apk update \
- && apk --no-cache add fontconfig ttf-dejavu chromium pandoc\
+ && apk --no-cache add fontconfig ttf-dejavu chromium pandoc imagemagick imagemagick-heic imagemagick-jpeg imagemagick-jxl imagemagick-pdf imagemagick-svg imagemagick-tiff imagemagick-webp\
  && rm -rf /var/cache/apk/* /tmp/* /var/tmp/*
 
 # Setup fmtutils folder
