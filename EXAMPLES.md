@@ -4,6 +4,7 @@ List of examples:
 
 | Category | Example title |
 |----------|---------------|
+| Badge   | Generate a SVG badge |
 | Banner  | Generate an ascii banner |
 | Convert | Convert MD into PDF |
 | Convert | Convert DOCx into MD |
@@ -103,4 +104,20 @@ To pick the font you like you can also output the string in all available fonts:
 str2banner.yaml str=Utils list=true | less -R
 reset
 
+```
+
+---
+
+## 🏳️ Create a SVG badge
+
+To generate a SVG badge with two parts you can oafp:
+
+```bash
+oafp libs=Badgen data="(label: 'status', status: OK, color: green)" out=badgen > my-badge.svg
+```
+
+You can see avaiable options by executing:
+
+```bash
+oafp libs=Badgen help=badgen
 ```
